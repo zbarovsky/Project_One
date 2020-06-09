@@ -15,29 +15,29 @@ No one quite knows how it started, WW3, Corona, tear gas, the "deep fake". But w
 
 ## Tech Stack
 
-HTML/CSS
-Javascript
-Phaser.js
+HTML/CSS<br>
+Javascript<br> 
+Phaser.js<br>
 
 ## MVP Goals
 
-sprite enters room
-zombies spawn
-sprite defeats zombies (thows knife or swings sword)
-move to next room, repeat
+sprite enters room<br>
+zombies spawn<br>
+sprite defeats zombies (thows knife or swings sword)<br>
+move to next room, repeat<br>
 score increase with each kill
 
 ## Stretch Goals
 
-LOTS OF ROOMS!!!
-different weapons
-zombie boss in specific room
-health regen abilities (i.e. find a heart = gain more life)
-cool sound effects
-Add your own name
+LOTS OF ROOMS!!!<br>
+different weapons<br>
+zombie boss in specific room<br>
+health regen abilities (i.e. find a heart = gain more life)<br>
+cool sound effects<br>
+Add your own name<br>
 time attack mode - race against the clock.
 
 ## Roadblocks
 
-Don't know how to use phaser yet
+Don't know how to use phaser yet<br>
 Need to get better with grid
