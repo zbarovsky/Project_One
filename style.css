@@ -6,6 +6,11 @@ html, body {
 body {
     text-align: center;
     font-family: 'Press Start 2P', cursive;
+    background-color: black;
+}
+
+h1, p {
+    color: ghostwhite;
 }
 
 canvas {
@@ -23,15 +28,35 @@ canvas {
     grid-gap: 1em;
     grid-template-rows: .25fr .5fr .25fr;
     grid-template-columns: .25fr .5fr .25fr;
-    grid-template-areas: "top-left top-left top-right"
+    grid-template-areas: "top-left top-center top-right"
                          "game game game"
                          "btm btm btm"
 }
 
-#top-left, #top-right, #btm {
+#top-left, #top-center, #top-right, #btm {
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: darkgray;
+}
+
+#top-left {
+    grid-area: top-left;
+}
+
+#top-center {
+    grid-area: top-center;
+}
+
+#top-right {
+    grid-area: top-right;
+}
+
+#btm {
+    grid-area: btm;
+}
+
+main {
+    grid-area: game;
 }
 
