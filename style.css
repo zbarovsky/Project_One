@@ -1,4 +1,4 @@
-html, body {
+ html, body {
     margin: 0;
     padding: 0;
 }
@@ -6,12 +6,16 @@ html, body {
 body {
     text-align: center;
     font-family: 'Press Start 2P', cursive;
-    background-color: black;
+    background-color: rgb(165, 165, 165);
 }
 
 h1, p {
-    color: ghostwhite;
+    color: #800020;
 }
+
+/*
+
+grid outline
 
 canvas {
     background-color: darkgray;
@@ -59,4 +63,4 @@ canvas {
 main {
     grid-area: game;
 }
-
+ */

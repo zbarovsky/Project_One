@@ -1,19 +1,18 @@
-//console.log("test")
-document.addEventListener("DOMContentLoaded", function(){
+//console.log("test");
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create: create, update: update})
+
+function preload() {
     
-/* ------------------- DOM REFS -------------------- */
+}
 
+function create() {
 
+}
 
-
-/* ----------------- CREATUS PERSONSUS ------------------ */
-
-
-
-/* ------------------- GAME LOOPS/STATES ------------------ */
-
-
-
-/* ------------------- MOVEMENT ---------------------------- */
-
-})
+function update() {
+    // Center game on screen
+    game.scale.pageAlignHorizontally = true;
+    game.scale.pageAlignVertically = true;
+    game.scale.refresh();
+}
