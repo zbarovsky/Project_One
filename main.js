@@ -3,19 +3,34 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create: create, update: update})
 
 function preload() {
-    game.load.image('hero', 'img/X.png')
+    game.load.image('floor', 'img/flooring.png')
+    game.load.image('hero', 'img/x.png')
+    game.load.image('zombie', 'img/zombie.png');
 }
+
+// Declare Group to attach sword to hero
+
+// Declare Group that randomly spawns X number of zombies per room
+// randomX && randomY for positioning
+// Math.floor && Math.random for random amount of zombies
+
 
 function create() {
     // startin up them physics
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    player = game.add.sprite(0,0, 'hero')
-    //physics to player
-    game.physics.arcade.enable(player)
+    game.add.sprite(0, 0, 'floor');
+
+    // add hero and their physics
+    player = game.add.sprite(375, 500, 'hero');
+    game.physics.arcade.enable(player);
 
     // create keyboard management
     cursors = game.input.keyboard.createCursorKeys();
+
+    // Create Score board and Lives Bar
+    scoreBoard = game.add.text(16, 16, 'Score: 0', {fontSize: '32px', fill: '#ffffff'});
+    livesBar = game.add.text(600, 16, 'Lives Left: 10', {fontSize: '32px', fill: '#ffffff'});
 }
 
 function update() {
@@ -24,7 +39,7 @@ function update() {
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
 
-    //TODO Set WASD, Not Arrows //
+    //TODO Map WASD, Not Arrows  && Add swiping sword function //
     if (cursors.up.isDown) {
         player.body.velocity.y = -150
     }
