@@ -17,6 +17,11 @@ let walls;
 let zombieHorde; 
 let player;
 
+let score = 0;
+let scoreBoard;
+
+let lives = 100;
+let lifeBar;
 
 
 function create() {
@@ -69,13 +74,12 @@ function create() {
     zombieHorde.enableBody = true;
     game.physics.arcade.enable(zombieHorde);
 
-
-    //TODO split up function to update for movement in different function
-    for (i = 0; i < Math.floor(Math.random() * 11); i++) {
+    for (i = 0; i < Math.floor(Math.random() * 30); i++) {
         let hoard = zombieHorde.create(game.world.randomX, game.world.randomY, 'zombie');
         hoard.body.collideWorldBoundaires = true;
-        hoard.body.velocity.x = Math.floor(Math.random() * 100);
-        hoard.body.velocity.y = Math.floor(Math.random() * 100);
+        game.physics.arcade.moveToXY(hoard, Math.floor(Math.random() * 400), Math.floor(Math.random() * 600), speed = 30);
+
+        //TODO Respawn function for different rooms
     }
 
     // create keyboard management
@@ -84,15 +88,19 @@ function create() {
 
     // Create Score board and Lives Bar
     scoreBoard = game.add.text(16, 16, 'Score: 0', {fontSize: '32px', fill: '#ffffff'});
-    livesBar = game.add.text(600, 16, 'Lives Left: 10', {fontSize: '32px', fill: '#ffffff'});
+    lifeBar = game.add.text(600, 16, 'Life: 100', {fontSize: '32px', fill: '#ffffff'});
 }
 
 function update() {
 
     // physics for player and walls && hoard and walls
     game.physics.arcade.collide(hero, walls);
-    game.physics.arcade.collide(sword, walls);
+    // game.physics.arcade.collide(hero, zombieHorde);
+
     game.physics.arcade.collide(sword, hero);
+    game.physics.arcade.collide(sword, walls);
+    // game.physics.arcade.collide(sword, zombieHorde);
+
     game.physics.arcade.collide(zombieHorde, walls);
 
     // lets give some movement to our hero && sword
@@ -123,7 +131,7 @@ function update() {
         sword.animations.stop();
     }
 
-    // swing dat sword boi
+    // "swing" dat sword boi
     if (cursors.up.isDown && spacebar.isDown) {
         sword.body.velocity.y = -75;
         hero.body.velocity.y = -20;
@@ -138,8 +146,43 @@ function update() {
         hero.body.velocity.x = -20;
     }
 
+    // collision detections for sword -> zombie && zombie -> player
+
+    game.physics.arcade.overlap(sword, zombieHorde, slayZombies, null, this);
+
+    function slayZombies (sword, zombieHorde) {
+        zombieHorde.kill();
+
+        score +=10;
+        scoreBoard.text = 'Score: ' + score;
+
+        //write win function
+        //win();
+    }
+
+    game.physics.arcade.overlap(player, zombieHorde, slayHero, null, this);
+
+    function slayHero (player, zombieHorde) {
+        lives -=1;
+        //console.log(lives)
+        if (lives == 0) {
+            player.kill()
+            sword.kill()
+            //gameOver()
+               
+        }
+        lifeBar.text = "Life left: " + lives;
+    }
+
     // Center game on screen
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = true;
     game.scale.refresh();
 }
+    // Write gameOver function
+    // function gameOver()
+        // game stops moving
+        // black screen with reset button
+        // display score
+        // call reset function to reset gameboard
+
