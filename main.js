@@ -8,13 +8,14 @@ function preload() {
     game.load.image('zombie', 'img/zombie.png');
     game.load.image('wallVert', 'img/wallVertActualFinal.png');
     game.load.image('wallHorizontal', 'img/wallHorizontalFinal.png');
+    game.load.image('sword', 'img/sword.png');
 }
 
 /* ----------------------- GROUPS HERE ------------------------ */
 
 let walls;
 let zombieHorde; 
-let hero;
+let player;
 
 
 
@@ -29,12 +30,12 @@ function create() {
     walls = game.add.group();
     walls.enableBody = true;
 
-    // top wall
+    // Top wall
     let wallVert = walls.create(0, 0, 'wallVert');
     wallVert.scale.setTo(1, 1);
     wallVert.body.immovable = true;
 
-    // bottom wall
+    // Bottom wall
     wallVert = walls.create (0, 575, 'wallVert')
     wallVert.scale.setTo(1, 1);
     wallVert.body.immovable = true;
@@ -49,16 +50,27 @@ function create() {
     wallHorizontal.scale.setTo(1, 1);
     wallHorizontal.body.immovable = true;
 
-    // add hero and their physics
-    player = game.add.sprite(375, 500, 'hero');
+    // player group -- create hero and their physics
+    player = game.add.group();
+
+    // hero
+    hero = player.create(375, 500, 'hero');
     game.physics.arcade.enable(player);
-    player.body.collideWorldBoundaires = true;
+    hero.body.collideWorldBoundaires = true;
+
+    //sword to hero
+    sword = player.create(375, 475, 'sword');
+    game.physics.arcade.enable(sword);
+    sword.scale.setTo(.3, .3);
+
 
     // Zombie Horde
     zombieHorde = game.add.group();
     zombieHorde.enableBody = true;
     game.physics.arcade.enable(zombieHorde);
 
+
+    //TODO split up function to update for movement in different function
     for (i = 0; i < Math.floor(Math.random() * 11); i++) {
         let hoard = zombieHorde.create(game.world.randomX, game.world.randomY, 'zombie');
         hoard.body.collideWorldBoundaires = true;
@@ -68,6 +80,7 @@ function create() {
 
     // create keyboard management
     cursors = game.input.keyboard.createCursorKeys();
+    spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
     // Create Score board and Lives Bar
     scoreBoard = game.add.text(16, 16, 'Score: 0', {fontSize: '32px', fill: '#ffffff'});
@@ -77,27 +90,52 @@ function create() {
 function update() {
 
     // physics for player and walls && hoard and walls
-    game.physics.arcade.collide(player, walls);
+    game.physics.arcade.collide(hero, walls);
+    game.physics.arcade.collide(sword, walls);
+    game.physics.arcade.collide(sword, hero);
     game.physics.arcade.collide(zombieHorde, walls);
 
-    // lets give some movement to our hero
-    player.body.velocity.x = 0;
-    player.body.velocity.y = 0;
+    // lets give some movement to our hero && sword
+    hero.body.velocity.x = 0;
+    sword.body.velocity.x = 0;
+
+    hero.body.velocity.y = 0;
+    sword.body.velocity.y = 0;
 
     //TODO Map WASD, Not Arrows  && Add swiping sword function //
     if (cursors.up.isDown) {
-        player.body.velocity.y = -150
+        hero.body.velocity.y = -150;
+        sword.body.velocity.y = -150;
     }
     else if (cursors.right.isDown) {
-        player.body.velocity.x = 150
+        hero.body.velocity.x = 150;
+        sword.body.velocity.x = 150
     }
     else if (cursors.down.isDown) {
-        player.body.velocity.y = 150
+        hero.body.velocity.y = 150;
+        sword.body.velocity.y = 150;
     }
     else if (cursors.left.isDown) {
-        player.body.velocity.x = -150
+        hero.body.velocity.x = -150
+        sword.body.velocity.x = -150
     } else {
-        player.animations.stop();
+        hero.animations.stop();
+        sword.animations.stop();
+    }
+
+    // swing dat sword boi
+    if (cursors.up.isDown && spacebar.isDown) {
+        sword.body.velocity.y = -75;
+        hero.body.velocity.y = -20;
+    } else if (cursors.right.isDown && spacebar.isDown) {
+        sword.body.velocity.x = 75;
+        hero.body.velocity.x = 20;
+    } else if (cursors.down.isDown && spacebar.isDown) {
+        sword.body.velocity.y = 75;
+        hero.body.velocity.y = 20;
+    } else if (cursors.left.isDown && spacebar.isDown) {
+        sword.body.velocity.x = -75;
+        hero.body.velocity.x = -20;
     }
 
     // Center game on screen
