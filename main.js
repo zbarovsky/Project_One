@@ -9,9 +9,10 @@ function preload() {
     game.load.image('wallVert', 'img/wallVertActualFinal.png');
     game.load.image('wallHorizontal', 'img/wallHorizontalFinal.png');
     game.load.image('sword', 'img/sword.png');
+    game.load.image('gameOver', 'img/gameOverScreen.png')
 }
 
-/* ----------------------- GROUPS HERE ------------------------ */
+/* ----------------------- Global Variables HERE ------------------------ */
 
 let walls;
 let zombieHorde; 
@@ -22,6 +23,8 @@ let scoreBoard;
 
 let lives = 100;
 let lifeBar;
+
+let gameOverScreen;
 
 
 function create() {
@@ -168,7 +171,7 @@ function update() {
         if (lives == 0) {
             player.kill()
             sword.kill()
-            //gameOver()
+            gameOver()
                
         }
         lifeBar.text = "Life left: " + lives;
@@ -179,10 +182,21 @@ function update() {
     game.scale.pageAlignVertically = true;
     game.scale.refresh();
 }
-    // Write gameOver function
-    // function gameOver()
-        // game stops moving
-        // black screen with reset button
-        // display score
+
+/* ------------------- GAME FUNCTIONS ---------------------- */
+
+    function gameOver() {
+        gameOverScreen = game.add.group();
+        background = gameOverScreen.create(0, 0, 'gameOver');
+        scoreBoard = game.add.text(300, 400, 'Final score: ' + score, {fontSize: '48px', fill: '#800020'});
         // call reset function to reset gameboard
+        // play again? button
+            // reset() function
+    }
+
+    // Write reset() function
+    // restet(){}
+        
+        
+        
 
