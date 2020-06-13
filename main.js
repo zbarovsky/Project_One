@@ -9,7 +9,8 @@ function preload() {
     game.load.image('wallVert', 'img/wallVertActualFinal.png');
     game.load.image('wallHorizontal', 'img/wallHorizontalFinal.png');
     game.load.image('sword', 'img/sword.png');
-    game.load.image('gameOver', 'img/gameOverScreen.png')
+    game.load.image('gameOver', 'img/gameOverScreen.png');
+    game.load.image('playAgainButton', 'img/playAgainButton.png');
 }
 
 /* ----------------------- Global Variables HERE ------------------------ */
@@ -17,6 +18,8 @@ function preload() {
 let walls;
 let zombieHorde; 
 let player;
+let hero;
+let sword;
 
 let score = 0;
 let scoreBoard;
@@ -25,7 +28,11 @@ let lives = 100;
 let lifeBar;
 
 let gameOverScreen;
+let playAgain;
+let playAgainButton;
+let finalScore;
 
+/* --------------------- CREATE and UPDATE Functions -------------------------- */
 
 function create() {
     // startin up them physics
@@ -61,29 +68,14 @@ function create() {
     // player group -- create hero and their physics
     player = game.add.group();
 
-    // hero
-    hero = player.create(375, 500, 'hero');
-    game.physics.arcade.enable(player);
-    hero.body.collideWorldBoundaires = true;
-
-    //sword to hero
-    sword = player.create(375, 475, 'sword');
-    game.physics.arcade.enable(sword);
-    sword.scale.setTo(.3, .3);
-
+    createHero()
 
     // Zombie Horde
     zombieHorde = game.add.group();
     zombieHorde.enableBody = true;
     game.physics.arcade.enable(zombieHorde);
-
-    for (i = 0; i < Math.floor(Math.random() * 30); i++) {
-        let hoard = zombieHorde.create(game.world.randomX, game.world.randomY, 'zombie');
-        hoard.body.collideWorldBoundaires = true;
-        game.physics.arcade.moveToXY(hoard, Math.floor(Math.random() * 400), Math.floor(Math.random() * 600), speed = 30);
-
-        //TODO Respawn function for different rooms
-    }
+    
+    summonHoard()
 
     // create keyboard management
     cursors = game.input.keyboard.createCursorKeys();
@@ -183,19 +175,56 @@ function update() {
     game.scale.refresh();
 }
 
-/* ------------------- GAME FUNCTIONS ---------------------- */
+/* ------------------- ADDITIONAL GAME FUNCTIONS ---------------------- */
 
-    function gameOver() {
-        gameOverScreen = game.add.group();
-        background = gameOverScreen.create(0, 0, 'gameOver');
-        scoreBoard = game.add.text(300, 400, 'Final score: ' + score, {fontSize: '48px', fill: '#800020'});
-        // call reset function to reset gameboard
-        // play again? button
-            // reset() function
+function createHero() {
+    hero = player.create(375, 500, 'hero');
+    game.physics.arcade.enable(player);
+    hero.body.collideWorldBoundaires = true;
+
+    //sword to hero
+    sword = player.create(375, 475, 'sword');
+    game.physics.arcade.enable(sword);
+    sword.scale.setTo(.3, .3);
+} 
+
+function summonHoard() {
+    for (i = 0; i < Math.floor(Math.random() * 30); i++) {
+        let hoard = zombieHorde.create(game.world.randomX, game.world.randomY, 'zombie');
+        hoard.body.collideWorldBoundaires = true;
+        game.physics.arcade.moveToXY(hoard, Math.floor(Math.random() * 400), Math.floor(Math.random() * 600), speed = 30);
+
+        //TODO Respawn function for different rooms
     }
+} 
 
-    // Write reset() function
-    // restet(){}
+function gameOver() {
+    gameOverScreen = game.add.group();
+
+    background = gameOverScreen.create(0, 0, 'gameOver');
+    finalScore = game.add.text(300, 400, 'Final score: ' + score, {fontSize: '48px', fill: '#800020'});
+    playAgain = game.add.text(300, 450, 'Play Again?', {fontSize: '48px', fill: '#800020'});
+    playAgainButton = game.add.button(300, 450, 'playAgainButton', reset, this);
+
+    gameOverScreen.add(playAgainButton);
+    gameOverScreen.add(playAgain);
+    gameOverScreen.add(finalScore);
+}
+
+function reset() {
+    //console.log("games reset dawg");
+    
+    gameOverScreen.visible =! gameOverScreen.visible;
+    
+    score = 0;
+    scoreBoard.text = 'Score: ' + score;
+    lives = 100;
+    lifeBar.text = 'Life left: ' + lives;
+    
+    createHero()
+    
+    summonHoard()
+}
         
         
         
