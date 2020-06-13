@@ -4,18 +4,34 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create:
 
 function preload() {
     game.load.image('floor', 'img/flooringFinal.png')
+
     game.load.image('hero', 'img/x.png')
     game.load.image('zombie', 'img/zombie.png');
+    game.load.image('sword', 'img/swordFinal.png');
+
     game.load.image('wallVert', 'img/wallVertActualFinal.png');
     game.load.image('wallHorizontal', 'img/wallHorizontalFinal.png');
-    game.load.image('sword', 'img/sword.png');
+
+    game.load.image('northDoor', 'img/northDoor.png');
+    game.load.image('eastDoor', 'img/eastDoor.png');
+    game.load.image('southDoor', 'img/southDoor.png');
+    game.load.image('westDoor', 'img/westDoor.png');
+    
     game.load.image('gameOver', 'img/gameOverScreen.png');
     game.load.image('playAgainButton', 'img/playAgainButton.png');
 }
 
 /* ----------------------- Global Variables HERE ------------------------ */
 
+let floor;
 let walls;
+
+let doors;
+let northDoor;
+let southDoor;
+let eastDoor;
+let westDoor;
+
 let zombieHorde; 
 let player;
 let hero;
@@ -38,32 +54,19 @@ function create() {
     // startin up them physics
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    let floor = game.add.sprite(0, 0, 'floor');
-    floor.scale.setTo(1, 1);
+    createFloor()
 
     // set up walls grouping
     walls = game.add.group();
     walls.enableBody = true;
 
-    // Top wall
-    let wallVert = walls.create(0, 0, 'wallVert');
-    wallVert.scale.setTo(1, 1);
-    wallVert.body.immovable = true;
+    createRoom()
 
-    // Bottom wall
-    wallVert = walls.create (0, 575, 'wallVert')
-    wallVert.scale.setTo(1, 1);
-    wallVert.body.immovable = true;
+    // Create doors and set up room change function
+    doors = game.add.group()
+    doors.enableBody = true;
 
-    // East Wall
-    let wallHorizontal = walls.create (750, 0, 'wallHorizontal');
-    wallHorizontal.scale.setTo(1, 1);
-    wallHorizontal.body.immovable = true;
-
-    // Weast wall
-    wallHorizontal = walls.create (-50, 0, 'wallHorizontal');
-    wallHorizontal.scale.setTo(1, 1);
-    wallHorizontal.body.immovable = true;
+    createDoors()
 
     // player group -- create hero and their physics
     player = game.add.group();
@@ -79,7 +82,6 @@ function create() {
 
     // create keyboard management
     cursors = game.input.keyboard.createCursorKeys();
-    spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
     // Create Score board and Lives Bar
     scoreBoard = game.add.text(16, 16, 'Score: 0', {fontSize: '32px', fill: '#ffffff'});
@@ -108,37 +110,30 @@ function update() {
     //TODO Map WASD, Not Arrows  && Add swiping sword function //
     if (cursors.up.isDown) {
         hero.body.velocity.y = -150;
+        sword.anchor.x = -0.5;
+        sword.anchor.y = 0.1;
         sword.body.velocity.y = -150;
     }
     else if (cursors.right.isDown) {
         hero.body.velocity.x = 150;
+        sword.anchor.x = -1.5;
+        sword.anchor.y = -1;
         sword.body.velocity.x = 150
     }
     else if (cursors.down.isDown) {
         hero.body.velocity.y = 150;
+        sword.anchor.x = -0.15;
+        sword.anchor.y = -2.4;
         sword.body.velocity.y = 150;
     }
     else if (cursors.left.isDown) {
         hero.body.velocity.x = -150
+        sword.anchor.x = 1;
+        sword.anchor.y = -1;
         sword.body.velocity.x = -150
     } else {
         hero.animations.stop();
         sword.animations.stop();
-    }
-
-    // "swing" dat sword boi
-    if (cursors.up.isDown && spacebar.isDown) {
-        sword.body.velocity.y = -75;
-        hero.body.velocity.y = -20;
-    } else if (cursors.right.isDown && spacebar.isDown) {
-        sword.body.velocity.x = 75;
-        hero.body.velocity.x = 20;
-    } else if (cursors.down.isDown && spacebar.isDown) {
-        sword.body.velocity.y = 75;
-        hero.body.velocity.y = 20;
-    } else if (cursors.left.isDown && spacebar.isDown) {
-        sword.body.velocity.x = -75;
-        hero.body.velocity.x = -20;
     }
 
     // collision detections for sword -> zombie && zombie -> player
@@ -175,9 +170,58 @@ function update() {
     game.scale.refresh();
 }
 
-/* ------------------- ADDITIONAL GAME FUNCTIONS ---------------------- */
+/* ------------------- GAME FUNCTIONS ---------------------- */
+
+function createFloor () {
+    let floor = game.add.sprite(0, 0, 'floor');
+    floor.scale.setTo(1, 1);
+    } 
+
+function createRoom () {
+
+    // North wall
+    let wallVert = walls.create(0, 0, 'wallVert');
+    wallVert.scale.setTo(1, 1);
+    wallVert.body.immovable = true;
+
+    // South wall
+    wallVert = walls.create (0, 575, 'wallVert')
+    wallVert.scale.setTo(1, 1);
+    wallVert.body.immovable = true;
+
+    // East Wall
+    let wallHorizontal = walls.create (750, 0, 'wallHorizontal');
+    wallHorizontal.scale.setTo(1, 1);
+    wallHorizontal.body.immovable = true;
+
+    // Weast wall
+    wallHorizontal = walls.create (-50, 0, 'wallHorizontal');
+    wallHorizontal.scale.setTo(1, 1);
+    wallHorizontal.body.immovable = true;
+
+}
+
+function createDoors() {
+    // North door
+    let northDoor = doors.create(375, 15, 'northDoor');
+    northDoor.body.immovable = true;
+
+    // East door
+    let eastDoor = doors.create(740, 275, 'eastDoor');
+    eastDoor.body.immovable = true;
+
+    // South door
+    let southDoor = doors.create(375, 565, 'southDoor');
+    southDoor.body.immovable = true;
+
+    // Weast door
+    let westDoor = doors.create(-30, 275, 'westDoor');
+    westDoor.body.immovable = true;
+
+} 
 
 function createHero() {
+
     hero = player.create(375, 500, 'hero');
     game.physics.arcade.enable(player);
     hero.body.collideWorldBoundaires = true;
@@ -189,6 +233,7 @@ function createHero() {
 } 
 
 function summonHoard() {
+
     for (i = 0; i < Math.floor(Math.random() * 30); i++) {
         let hoard = zombieHorde.create(game.world.randomX, game.world.randomY, 'zombie');
         hoard.body.collideWorldBoundaires = true;
@@ -199,6 +244,7 @@ function summonHoard() {
 } 
 
 function gameOver() {
+
     gameOverScreen = game.add.group();
 
     background = gameOverScreen.create(0, 0, 'gameOver');
@@ -227,5 +273,26 @@ function reset() {
 }
         
         
-        
 
+/* --------------------------- ARCHIVE -------------------- */
+
+// "swing" dat sword boi
+    // if (cursors.up.isDown && spacebar.isDown) {
+    //     sword.body.velocity.y = -75;
+    //     hero.body.velocity.y = -20;
+    // } else if (cursors.right.isDown && spacebar.isDown) {
+    //     sword.body.velocity.x = 75;
+    //     hero.body.velocity.x = 20;
+    // } else if (cursors.down.isDown && spacebar.isDown) {
+    //     sword.body.velocity.y = 75;
+    //     hero.body.velocity.y = 20;
+    // } else if (cursors.left.isDown && spacebar.isDown) {
+    //     sword.body.velocity.x = -75;
+    //     hero.body.velocity.x = -20;
+    // }
+
+    // switch (e.key) {
+    //     case "w":
+    //     hero.body.velocity.y = -150;
+    //     break;
+    // }
