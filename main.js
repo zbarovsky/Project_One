@@ -5,8 +5,8 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create:
 function preload() {
     game.load.image('floor', 'img/flooringFinal.png')
 
-    game.load.image('hero', 'img/x.png')
-    game.load.image('zombie', 'img/zombie.png');
+    game.load.spritesheet('hero', 'img/heroSpritesheet.png', 50, 80)
+    game.load.spritesheet('zombie', 'img/zombieSpritesheet.png', 38, 45);
     game.load.image('sword', 'img/swordFinal.png');
 
     game.load.image('wallVert', 'img/wallVertActualFinal.png');
@@ -55,10 +55,8 @@ let finalScore;
 function create() {
     // startin up them physics
     game.world.setBounds (0,0, 1600, 1200);
-
     game.physics.startSystem(Phaser.Physics.ARCADE);
     
-
     createFloor()
 
     // set up walls grouping
@@ -116,24 +114,28 @@ function update() {
     //TODO Map WASD, Not Arrows  && Add swiping sword function //
     if (cursors.up.isDown) {
         hero.body.velocity.y = -150;
+        hero.animations.play('up');
         sword.anchor.x = -0.5;
         sword.anchor.y = 0.1;
         sword.body.velocity.y = -150;
     }
     else if (cursors.right.isDown) {
         hero.body.velocity.x = 150;
+        hero.animations.play('right')
         sword.anchor.x = -1.5;
         sword.anchor.y = -1;
         sword.body.velocity.x = 150
     }
     else if (cursors.down.isDown) {
         hero.body.velocity.y = 150;
+        hero.animations.play('down');
         sword.anchor.x = -0.15;
-        sword.anchor.y = -2.4;
+        sword.anchor.y = -3.5;
         sword.body.velocity.y = 150;
     }
     else if (cursors.left.isDown) {
         hero.body.velocity.x = -150
+        hero.animations.play('left')
         sword.anchor.x = 1;
         sword.anchor.y = -1;
         sword.body.velocity.x = -150
@@ -226,20 +228,20 @@ function createWalls () {
 
     // Middle Vert Wall
     let wallHorizontal = walls.create (750, 0, 'wallHorizontal');
-    wallHorizontal.scale.setTo(1, 0.65);
+    wallHorizontal.scale.setTo(1, 0.62);
     wallHorizontal.body.immovable = true;
     //Mid Vert 2
     wallHorizontal = walls.create (750, 600, 'wallHorizontal');
-    wallHorizontal.scale.setTo(1, 0.5);
+    wallHorizontal.scale.setTo(1, 0.45);
     wallHorizontal.body.immovable = true;
     //mid vert 3
     wallHorizontal = walls.create (750, 1050, 'wallHorizontal');
-    wallHorizontal.scale.setTo(1, 0.5);
+    wallHorizontal.scale.setTo(1, 0.45);
     wallHorizontal.body.immovable = true;
 
     // East Wall
     wallMid = walls.create(1550,0, 'wallHorizontal');
-    wallMid.scale.setTo(1, 1.35);
+    wallMid.scale.setTo(1, 1.32);
     wallMid.body.immovable = true;
 
     // Weast wall
@@ -255,8 +257,8 @@ function createDoors() {
     function roomOne () {
 
     // East door
-    let eastDoor = doors.create(750, 520, 'eastDoor');
-    eastDoor.scale.setTo(1,1.55);
+    let eastDoor = doors.create(750, 500, 'eastDoor');
+    eastDoor.scale.setTo(1,2);
     eastDoor.enableBody = true;
     eastDoor.body.immovable = true;
 
@@ -278,15 +280,16 @@ function createDoors() {
 
     // bottom left
     function roomThree() {
-        let eastDoor = doors.create(750, 1000, 'eastDoor');
+        let eastDoor = doors.create(750, 950, 'eastDoor');
+        eastDoor.scale.setTo(1,2)
         eastDoor.enableBody = true;
         eastDoor.body.immovable = true;
     } roomThree()
 
     // bottom right
     function roomFour() {
-        let eastDoor = doors.create(1550, 1075, 'eastDoor');
-        eastDoor.scale.setTo(1,1.5);
+        let eastDoor = doors.create(1550, 1050, 'eastDoor');
+        eastDoor.scale.setTo(1,2);
         eastDoor.enableBody = true;
         eastDoor.body.immovable = true;
     }roomFour()
@@ -294,9 +297,16 @@ function createDoors() {
 
 function createHero() {
 
-    hero = player.create(400, 300, 'hero');
-    game.physics.arcade.enable(player);
+    //hero = player.create(400, 300, 'hero');
+    hero = game.add.sprite(400,300, 'hero')
+    player.add(hero);
+    game.physics.arcade.enable(hero);
     hero.body.collideWorldBoundaires = true;
+
+    hero.animations.add('left', [0], 10, true);
+    hero.animations.add ('right', [2], 10, true);
+    hero.animations.add('up', [3], 10, true);
+    hero.animations.add('down', [1], 10, true);
 
     //sword to hero
     sword = player.create(400, 275, 'sword');
@@ -308,7 +318,9 @@ function summonHoard() {
 
     for (i = 0; i < Math.floor(Math.random() * 100); i++) {
 
-        let hoard = zombieHorde.create(game.world.randomX, game.world.randomY, 'zombie');
+        let hoard = game.add.sprite(game.world.randomX, game.world.randomY, 'zombie');
+        hoard.scale.setTo(1.5,2);
+        zombieHorde.add(hoard);
         hoard.body.collideWorldBoundaires = true;
         // TODO change to follow player around if able
         game.physics.arcade.moveToXY(hoard, Math.floor(Math.random() * 400), Math.floor(Math.random() * 600), speed = 30);
