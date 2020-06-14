@@ -33,8 +33,11 @@ let southDoor;
 let eastDoor;
 let westDoor;
 
+let hoard;
+let zombieHorde;
+let finalBoss;
+let bossHealth = 50;
 
-let zombieHorde; 
 let player;
 let hero;
 let sword;
@@ -80,6 +83,11 @@ function create() {
     zombieHorde = game.add.group();
     zombieHorde.enableBody = true;
     game.physics.arcade.enable(zombieHorde);
+
+    boss = game.add.group();
+    boss.enableBody = true;
+    game.physics.arcade.enable(boss);
+    
     
     summonHoard()
 
@@ -95,13 +103,14 @@ function create() {
 
 function update() {
 
-    // physics for player and walls && hoard and walls
+    // physics for objects
     game.physics.arcade.collide(hero, walls);
     game.physics.arcade.collide(sword, hero);
     game.physics.arcade.collide(sword, walls);
-    // game.physics.arcade.collide(hero, doors);
-    
-
+    // game.physics.arcade.collide(hero, boss);
+    // game.physics.arcade.collide(sword, boss);
+    game.physics.arcade.collide(boss, walls);
+    game.physics.arcade.collide(finalBoss, walls);
     game.physics.arcade.collide(zombieHorde, walls);
 
     // lets give some movement to our hero && sword
@@ -111,66 +120,56 @@ function update() {
     hero.body.velocity.y = 0;
     sword.body.velocity.y = 0;
 
-    //TODO Map WASD, Not Arrows  && Add swiping sword function //
-    if (cursors.up.isDown) {
-        hero.body.velocity.y = -150;
-        hero.animations.play('up');
-        sword.anchor.x = -0.5;
-        sword.anchor.y = 0.1;
-        sword.body.velocity.y = -150;
-    }
-    else if (cursors.right.isDown) {
-        hero.body.velocity.x = 150;
-        hero.animations.play('right')
-        sword.anchor.x = -1.5;
-        sword.anchor.y = -1;
-        sword.body.velocity.x = 150
-    }
-    else if (cursors.down.isDown) {
-        hero.body.velocity.y = 150;
-        hero.animations.play('down');
-        sword.anchor.x = -0.15;
-        sword.anchor.y = -3.5;
-        sword.body.velocity.y = 150;
-    }
-    else if (cursors.left.isDown) {
-        hero.body.velocity.x = -150
-        hero.animations.play('left')
-        sword.anchor.x = 1;
-        sword.anchor.y = -1;
-        sword.body.velocity.x = -150
-    } else {
-        hero.animations.stop();
-        sword.animations.stop();
-    }
+    let w = game.input.keyboard.addKey(Phaser.Keyboard.W);
+    let a = game.input.keyboard.addKey(Phaser.Keyboard.A);
+    let s = game.input.keyboard.addKey(Phaser.Keyboard.S);
+    let d = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
-    // collision detections for sword -> zombie && zombie -> player
-
-    game.physics.arcade.overlap(sword, zombieHorde, slayZombies, null, this);
-
-    function slayZombies (sword, zombieHorde) {
-        zombieHorde.kill();
-
-        score +=10;
-        scoreBoard.text = 'Score: ' + score;
-
-        //write win function
-        //win();
-    }
-
-    game.physics.arcade.overlap(hero, zombieHorde, slayHero, null, this);
-
-    function slayHero (player, zombieHorde) {
-        lives -=1;
-        //console.log(lives)
-        if (lives == 0) {
-            player.kill()
-            sword.kill()
-            gameOver()
-               
+    if (w.isDown || a.isDown || s.isDown || d.isDown) {
+        //hoard.forEach(stalk)
+        if (w.isDown) {
+            hero.body.velocity.y = -150;
+            hero.animations.play('up');
+            sword.anchor.x = -0.5;
+            sword.anchor.y = 0.1;
+            sword.body.velocity.y = -150;
         }
-        lifeBar.text = "Life left: " + lives;
+        if (a.isDown) {
+            hero.body.velocity.x = -150
+            hero.animations.play('left')
+            sword.anchor.x = 1;
+            sword.anchor.y = -1.5;
+            sword.body.velocity.x = -150
+        }
+        if (s.isDown) {
+            hero.body.velocity.y = 150;
+            hero.animations.play('down');
+            sword.anchor.x = -0.15;
+            sword.anchor.y = -3.5;
+            sword.body.velocity.y = 150;
+        }
+        if (d.isDown) {
+            hero.body.velocity.x = 150;
+            hero.animations.play('right')
+            sword.anchor.x = -1.5;
+            sword.anchor.y = -1.6;
+            sword.body.velocity.x = 150
+        }
+        else {
+            hero.animations.stop();
+            sword.animations.stop();
+        }
     }
+
+    // function stalk(hoard) {
+    //     game.physics.arcade.moveToObject(hoard,hero, 150)
+    // }
+
+    // Damage to horde, boss, hero
+    game.physics.arcade.overlap(sword, zombieHorde, slayZombies, null, this);
+    game.physics.arcade.overlap(hero, zombieHorde, slayHero, null, this);
+    game.physics.arcade.overlap(sword, boss, bossBattle, null, this);
+    game.physics.arcade.overlap(hero, boss, takeDamange, null, this);
 
     // Center game on screen
     game.scale.pageAlignHorizontally = true;
@@ -179,6 +178,49 @@ function update() {
 }
 
 /* ------------------- GAME FUNCTIONS ---------------------- */
+
+function slayZombies (sword, zombieHorde) {
+    zombieHorde.kill();
+
+    score +=10;
+    scoreBoard.text = 'Score: ' + score;
+
+    //write win function
+    //win();
+}
+
+function slayHero (player, zombieHorde) {
+    lives -=1;
+    //console.log(lives)
+    if (lives == 0) {
+        player.kill()
+        sword.kill()
+        gameOver()
+           
+    }
+    lifeBar.text = "Life left: " + lives;
+}
+
+function bossBattle (sword, boss) {
+    bossHealth -=1;
+    //console.log(bossHealth)
+    if (bossHealth == 0) {
+        boss.kill()
+        //win function shows screen that says ya fucking did it boi, wana play again?
+        //win()
+    }
+}
+
+function takeDamange(hero, boss) {
+    lives -=1;
+    //console.log(lives);
+    if (lives == 0) {
+        hero.kill()
+        sword.kill()
+        gameOver()
+    }
+    lifeBar.text = "Life left: " + lives;
+}
 
 function createFloor () {
 
@@ -323,9 +365,22 @@ function summonHoard() {
         zombieHorde.add(hoard);
         hoard.body.collideWorldBoundaires = true;
         // TODO change to follow player around if able
-        game.physics.arcade.moveToXY(hoard, Math.floor(Math.random() * 400), Math.floor(Math.random() * 600), speed = 30);
+        //game.physics.arcade.moveToXY(zombieHorde, Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000), speed = 30);
+        game.physics.arcade.moveToObject(hoard, hero, speed = 30);
+        
+    } 
 
-    }
+    let finalBoss = game.add.sprite(1000, 800, 'zombie')
+    finalBoss.scale.setTo(3,4);
+    boss.add(finalBoss);
+    finalBoss.body.collideWorldBoundaires = true;
+    finalBoss.body.immovable = true;
+    //game.physics.arcade.enable(finalBoss);
+    game.physics.arcade.moveToXY(finalBoss, 400, 400, speed = 30);
+
+    //TODO Make boss move
+    
+
 } 
 
 function gameOver() {
@@ -354,33 +409,10 @@ function reset() {
     lifeBar.text = 'Life left: ' + lives;
     
     createHero()
-    
+
     summonHoard()
 
     game.camera.follow(hero);
 }
-        
-        
 
-/* --------------------------- ARCHIVE -------------------- */
 
-// "swing" dat sword boi
-    // if (cursors.up.isDown && spacebar.isDown) {
-    //     sword.body.velocity.y = -75;
-    //     hero.body.velocity.y = -20;
-    // } else if (cursors.right.isDown && spacebar.isDown) {
-    //     sword.body.velocity.x = 75;
-    //     hero.body.velocity.x = 20;
-    // } else if (cursors.down.isDown && spacebar.isDown) {
-    //     sword.body.velocity.y = 75;
-    //     hero.body.velocity.y = 20;
-    // } else if (cursors.left.isDown && spacebar.isDown) {
-    //     sword.body.velocity.x = -75;
-    //     hero.body.velocity.x = -20;
-    // }
-
-    // switch (e.key) {
-    //     case "w":
-    //     hero.body.velocity.y = -150;
-    //     break;
-    // }
