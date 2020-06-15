@@ -3,7 +3,7 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create: create, update: update})
 
 function preload() {
-    game.load.image('floor', 'img/flooringFinal.png')
+    game.load.image('floor', 'img/FlooringFinal.png')
 
     game.load.spritesheet('hero', 'img/heroSpritesheet.png', 50, 80)
     game.load.spritesheet('zombie', 'img/zombieSpritesheet.png', 38, 45);
