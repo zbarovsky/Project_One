@@ -38,7 +38,7 @@ let eastDoor;
 let westDoor;
 
 let hoard;
-let zombieHorde;
+let zombieHorde = 0;
 
 let boss;
 let finalBoss;
@@ -111,6 +111,7 @@ function create() {
 
     // Display Score and Life Remaining
     scoreBoard = game.add.text(16, 16, 'Score: 0', {fontSize: '32px', fill: '#ffffff'});
+    bossHealthBar = game.add.text(300, 16, 'Boss health: 50', {fontSize: '32px', fill: '#ffffff'});
     lifeBar = game.add.text(600, 16, 'Life: 100', {fontSize: '32px', fill: '#ffffff'});
 
     game.camera.follow(hero);
@@ -125,7 +126,7 @@ function update() {
     game.physics.arcade.collide(hero, walls);
     game.physics.arcade.collide(sword, hero);
     game.physics.arcade.collide(sword, walls);
-    // game.physics.arcade.collide(hero, boss);
+    //game.physics.arcade.collide(hero, boss);
     // game.physics.arcade.collide(sword, boss);
     game.physics.arcade.collide(boss, walls);
     game.physics.arcade.collide(finalBoss, walls);
@@ -206,8 +207,6 @@ function slayZombies (sword, zombieHorde) {
     score +=10;
     scoreBoard.text = 'Score: ' + score;
 
-    //write win function
-    //win();
 }
 
 function slayHero (player, zombieHorde) {
@@ -230,6 +229,7 @@ function bossBattle (sword, boss) {
         //win function shows screen that says ya fucking did it boi, wana play again?
         win()
     }
+    bossHealthBar.text = "Boss health: " + bossHealth;
 }
 
 function takeDamange(hero, boss) {
@@ -392,7 +392,7 @@ function summonHoard() {
         // TODO change to follow player around if able
         //game.physics.arcade.moveToXY(zombieHorde, Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000), speed = 30);
         game.physics.arcade.moveToObject(hoard, hero, speed = 30);
-
+        //console.log(zombieHorde[i])
         
     } 
     bossEmerge()
@@ -407,12 +407,12 @@ function bossEmerge() {
     finalBoss.body.collideWorldBoundaires = true;
     finalBoss.body.immovable = true;
     //game.physics.arcade.enable(finalBoss);
-    game.physics.arcade.moveToXY(finalBoss, 400, 400, speed = 30);
-    // boss.events.onOutOfBounds.add(frameReset, this);
+    game.physics.arcade.moveToXY(finalBoss, Math.floor(Math.random() * 1600), Math.floor(Math.random() * 1200), speed = 30);
+    // finalBoss.events.onOutOfBounds.add(frameReset, this);
 }
 
-// function frameReset(boss) {
-//     finalBoss.reset(1000, 800);
+// function frameReset(finalBoss) {
+//     finalBoss.reset(finalBoss.x, finalBoss.y);
 // }
 
 /* -------------------------- END GAME FUNCTIONS -------------------------- */
@@ -434,7 +434,6 @@ function win() {
 
     game.camera.follow(gameOverScreen);
     
-    console.log("you win");
 }
 
 function gameOver() {
@@ -462,8 +461,9 @@ function reset() {
     lives = 100;
     lifeBar.text = 'Life left: ' + lives;
     bossHealth = 50;
+    bossHealthBar.text = "Boss health: " + bossHealth;
 
-    //finalBoss.kill();
+    //boss.kill();
     hero.kill();
     sword.kill();
 
