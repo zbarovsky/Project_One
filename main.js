@@ -393,7 +393,6 @@ function summonHoard() {
         //game.physics.arcade.moveToXY(zombieHorde, Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000), speed = 30);
         game.physics.arcade.moveToObject(hoard, hero, speed = 30);
         //console.log(zombieHorde[i])
-        
     } 
     bossEmerge()
    
