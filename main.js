@@ -1,11 +1,9 @@
-//console.log("test");
-
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create: create, update: update})
 
 function preload() {
-    game.load.image('floor', 'img/FlooringFinal.png')
+    game.load.image('floor', 'img/FlooringFinal.png');
 
-    game.load.spritesheet('hero', 'img/heroSpritesheet.png', 50, 80)
+    game.load.spritesheet('hero', 'img/heroSpritesheet.png', 50, 80);
     game.load.spritesheet('zombie', 'img/zombieSpritesheet.png', 38, 45);
     game.load.image('sword', 'img/swordFinal.png');
 
@@ -66,7 +64,7 @@ let congrats;
 
 // let music;
 
-/* --------------------- CREATE and UPDATE Functions -------------------------- */
+/* --------------------- CREATE and UPDATE Functions, DECLARE GROUPS -------------------------- */
 
 function create() {
 
@@ -126,7 +124,7 @@ function update() {
     game.physics.arcade.collide(hero, walls);
     game.physics.arcade.collide(sword, hero);
     game.physics.arcade.collide(sword, walls);
-    //game.physics.arcade.collide(hero, boss);
+    // game.physics.arcade.collide(hero, boss);
     // game.physics.arcade.collide(sword, boss);
     game.physics.arcade.collide(boss, walls);
     game.physics.arcade.collide(finalBoss, walls);
@@ -145,7 +143,7 @@ function update() {
     let d = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
     if (w.isDown || a.isDown || s.isDown || d.isDown) {
-        //hoard.forEach(stalk)
+
         if (w.isDown) {
             hero.body.velocity.y = -150;
             hero.animations.play('up');
@@ -180,11 +178,7 @@ function update() {
         }
     }
 
-    // function stalk(hoard) {
-    //     game.physics.arcade.moveToObject(hoard,hero, 150)
-    // }
-
-    // Damage Dealt
+    // Dealing Damage
     game.physics.arcade.overlap(sword, zombieHorde, slayZombies, null, this);
     game.physics.arcade.overlap(hero, zombieHorde, slayHero, null, this);
     game.physics.arcade.overlap(sword, boss, bossBattle, null, this);
@@ -211,7 +205,6 @@ function slayZombies (sword, zombieHorde) {
 
 function slayHero (player, zombieHorde) {
     lives -=1;
-    //console.log(lives)
     if (lives == 0) {
         player.kill()
         sword.kill()
@@ -223,10 +216,8 @@ function slayHero (player, zombieHorde) {
 
 function bossBattle (sword, boss) {
     bossHealth -=1;
-    //console.log(bossHealth)
     if (bossHealth == 0) {
         boss.kill()
-        //win function shows screen that says ya fucking did it boi, wana play again?
         win()
     }
     bossHealthBar.text = "Boss health: " + bossHealth;
@@ -234,7 +225,6 @@ function bossBattle (sword, boss) {
 
 function takeDamange(hero, boss) {
     lives -=1;
-    //console.log(lives);
     if (lives == 0) {
         hero.kill()
         sword.kill()
@@ -364,7 +354,6 @@ function createDoors() {
 
 function createHero() {
 
-    //hero = player.create(400, 300, 'hero');
     hero = game.add.sprite(400,300, 'hero')
     player.add(hero);
     game.physics.arcade.enable(hero);
@@ -407,12 +396,8 @@ function bossEmerge() {
     finalBoss.body.immovable = true;
     //game.physics.arcade.enable(finalBoss);
     game.physics.arcade.moveToXY(finalBoss, Math.floor(Math.random() * 1600), Math.floor(Math.random() * 1200), speed = 30);
-    // finalBoss.events.onOutOfBounds.add(frameReset, this);
+    //finalBoss.events.onOutOfBounds.add(frameReset, this);
 }
-
-// function frameReset(finalBoss) {
-//     finalBoss.reset(finalBoss.x, finalBoss.y);
-// }
 
 /* -------------------------- END GAME FUNCTIONS -------------------------- */
 
