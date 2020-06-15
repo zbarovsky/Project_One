@@ -165,7 +165,7 @@ function update() {
     //     game.physics.arcade.moveToObject(hoard,hero, 150)
     // }
 
-    // Damage to horde, boss, hero
+    // Damage Dealt
     game.physics.arcade.overlap(sword, zombieHorde, slayZombies, null, this);
     game.physics.arcade.overlap(hero, zombieHorde, slayHero, null, this);
     game.physics.arcade.overlap(sword, boss, bossBattle, null, this);
@@ -207,7 +207,7 @@ function bossBattle (sword, boss) {
     if (bossHealth == 0) {
         boss.kill()
         //win function shows screen that says ya fucking did it boi, wana play again?
-        //win()
+        win()
     }
 }
 
@@ -383,6 +383,11 @@ function summonHoard() {
 
 } 
 
+function win() {
+    gameOver()
+    console.log("you win");
+}
+
 function gameOver() {
 
     gameOverScreen = game.add.group();
@@ -407,7 +412,14 @@ function reset() {
     scoreBoard.text = 'Score: ' + score;
     lives = 100;
     lifeBar.text = 'Life left: ' + lives;
+    bossHealth = 50;
+
     
+    hero.kill();
+    sword.kill();
+
+    // TODO Make boss go away if you lose 
+
     createHero()
 
     summonHoard()
