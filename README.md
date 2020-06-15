@@ -21,17 +21,17 @@ No one quite knows how it started, WW3, Corona, tear gas, the "deep fake". But w
 
 ## MVP Goals
 
-- sprite enters room
-- zombies spawn
-- sprite defeats zombies (thows knife or swings sword)
-- move to next room, repeat
-- score increase with each kill
+- sprite enters room - DONE
+- zombies spawn - DONE
+- sprite defeats zombies (thows knife or swings sword) - DONE
+- move to next room, repeat - DONE
+- score increase with each kill - DONE
 
 ## Stretch Goals
 
-- LOTS OF ROOMS!!!
+- LOTS OF ROOMS!!! - DONE
 - different weapons
-- zombie boss in specific room
+- zombie boss in specific room - DONE
 - health regen abilities (i.e. find a heart = gain more life)
 - cool sound effects
 - Add your own name

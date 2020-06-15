@@ -19,6 +19,11 @@ function preload() {
     
     game.load.image('gameOver', 'img/gameOverScreen.png');
     game.load.image('playAgainButton', 'img/playAgainButton.png');
+
+    game.load.image('winImg', 'img/pixelHouse.png');
+    game.load.image('winButton', 'img/winButton.png');
+
+    // game.load.audio('music', 'img/KILL_EVERYTHING.wav');
 }
 
 /* ----------------------- Global Variables HERE ------------------------ */
@@ -27,7 +32,6 @@ let floor;
 let walls;
 
 let doors;
-
 let northDoor;
 let southDoor;
 let eastDoor;
@@ -35,8 +39,12 @@ let westDoor;
 
 let hoard;
 let zombieHorde;
+
+let boss;
 let finalBoss;
+
 let bossHealth = 50;
+let bossHealthBar;
 
 let player;
 let hero;
@@ -53,9 +61,15 @@ let playAgain;
 let playAgainButton;
 let finalScore;
 
+let winScreen;
+let congrats;
+
+// let music;
+
 /* --------------------- CREATE and UPDATE Functions -------------------------- */
 
 function create() {
+
     // startin up them physics
     game.world.setBounds (0,0, 1600, 1200);
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -84,6 +98,7 @@ function create() {
     zombieHorde.enableBody = true;
     game.physics.arcade.enable(zombieHorde);
 
+    // Big bad boss Spawn
     boss = game.add.group();
     boss.enableBody = true;
     game.physics.arcade.enable(boss);
@@ -94,11 +109,14 @@ function create() {
     // create keyboard management
     cursors = game.input.keyboard.createCursorKeys();
 
-    // Create Score board and Lives Bar
+    // Display Score and Life Remaining
     scoreBoard = game.add.text(16, 16, 'Score: 0', {fontSize: '32px', fill: '#ffffff'});
     lifeBar = game.add.text(600, 16, 'Life: 100', {fontSize: '32px', fill: '#ffffff'});
 
     game.camera.follow(hero);
+
+    // music = game.add.audio('music');
+    // music.play();
 }
 
 function update() {
@@ -179,6 +197,9 @@ function update() {
 
 /* ------------------- GAME FUNCTIONS ---------------------- */
 
+
+/* -------------------- COMBAT FUNCTIONS ------------------- */
+
 function slayZombies (sword, zombieHorde) {
     zombieHorde.kill();
 
@@ -221,6 +242,8 @@ function takeDamange(hero, boss) {
     }
     lifeBar.text = "Life left: " + lives;
 }
+
+/* -------------------- WORLD BUILDING FUNCTIONS ---------- */
 
 function createFloor () {
 
@@ -337,6 +360,8 @@ function createDoors() {
     }roomFour()
 } 
 
+/* ------------------ SPAWN FUNCTIONS --------------------- */
+
 function createHero() {
 
     //hero = player.create(400, 300, 'hero');
@@ -367,9 +392,15 @@ function summonHoard() {
         // TODO change to follow player around if able
         //game.physics.arcade.moveToXY(zombieHorde, Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000), speed = 30);
         game.physics.arcade.moveToObject(hoard, hero, speed = 30);
+
         
     } 
+    bossEmerge()
+   
+    
+} 
 
+function bossEmerge() {
     let finalBoss = game.add.sprite(1000, 800, 'zombie')
     finalBoss.scale.setTo(3,4);
     boss.add(finalBoss);
@@ -377,14 +408,32 @@ function summonHoard() {
     finalBoss.body.immovable = true;
     //game.physics.arcade.enable(finalBoss);
     game.physics.arcade.moveToXY(finalBoss, 400, 400, speed = 30);
+    // boss.events.onOutOfBounds.add(frameReset, this);
+}
 
-    //TODO Make boss move
-    
+// function frameReset(boss) {
+//     finalBoss.reset(1000, 800);
+// }
 
-} 
+/* -------------------------- END GAME FUNCTIONS -------------------------- */
 
 function win() {
-    gameOver()
+
+    gameOverScreen = game.add.group();
+
+    background = gameOverScreen.create(0,0, 'winImg');
+    congrats = game.add.text(200, 350, `Congrats! You're safe... for now`, {fontSize: '48px', fill: '#800020' });
+    finalScore = game.add.text(325, 400, 'Final Score: ' + score, {fontSize: '48px', fill: '#800020' });
+    playAgain = game.add.text(325, 450, 'Play Again', {fontSize: '48px', fill: '#800020'});
+    winButton = game.add.button(325, 450, 'winButton', reset, this);
+
+    gameOverScreen.add(congrats);
+    gameOverScreen.add(winButton);
+    gameOverScreen.add(playAgain);
+    gameOverScreen.add(finalScore);
+
+    game.camera.follow(gameOverScreen);
+    
     console.log("you win");
 }
 
@@ -414,7 +463,7 @@ function reset() {
     lifeBar.text = 'Life left: ' + lives;
     bossHealth = 50;
 
-    
+    //finalBoss.kill();
     hero.kill();
     sword.kill();
 
