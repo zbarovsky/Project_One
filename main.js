@@ -5,7 +5,7 @@ function preload() {
 
     game.load.spritesheet('hero', 'img/heroSpritesheet.png', 50, 80);
     game.load.spritesheet('zombie', 'img/zombieSpritesheet.png', 38, 45);
-    game.load.image('sword', 'img/swordFinal.png');
+    game.load.spritesheet('sword', 'img/swordSprite.png', 90, 92);
 
     game.load.image('wallVert', 'img/wallVertActualFinal.png');
     game.load.image('wallHorizontal', 'img/wallHorizontalFinal.png');
@@ -101,13 +101,14 @@ function create() {
     boss.enableBody = true;
     game.physics.arcade.enable(boss);
     
-    
     summonHoard()
+
+    bossEmerge()
 
     // create keyboard management
     cursors = game.input.keyboard.createCursorKeys();
 
-    // Display Score and Life Remaining
+    // Display Score and Life Remaining for hero and boss
     scoreBoard = game.add.text(16, 16, 'Score: 0', {fontSize: '32px', fill: '#ffffff'});
     bossHealthBar = game.add.text(300, 16, 'Boss health: 50', {fontSize: '32px', fill: '#ffffff'});
     lifeBar = game.add.text(600, 16, 'Life: 100', {fontSize: '32px', fill: '#ffffff'});
@@ -147,30 +148,36 @@ function update() {
         if (w.isDown) {
             hero.body.velocity.y = -150;
             hero.animations.play('up');
-            sword.anchor.x = -0.5;
+            sword.animations.play('right');
+            sword.anchor.x = -0.3;
             sword.anchor.y = 0.1;
             sword.body.velocity.y = -150;
+            
         }
         if (a.isDown) {
             hero.body.velocity.x = -150
             hero.animations.play('left')
+            sword.animations.play('left');
             sword.anchor.x = 1;
-            sword.anchor.y = -1.5;
+            sword.anchor.y = -1.3;
             sword.body.velocity.x = -150
         }
         if (s.isDown) {
             hero.body.velocity.y = 150;
             hero.animations.play('down');
-            sword.anchor.x = -0.15;
-            sword.anchor.y = -3.5;
+            sword.animations.play('left');
+            sword.anchor.x = -0.1;
+            sword.anchor.y = -2.8;
             sword.body.velocity.y = 150;
         }
         if (d.isDown) {
             hero.body.velocity.x = 150;
             hero.animations.play('right')
-            sword.anchor.x = -1.5;
+            sword.animations.play('right');
+            sword.anchor.x = -1.3;
             sword.anchor.y = -1.6;
             sword.body.velocity.x = 150
+            
         }
         else {
             hero.animations.stop();
@@ -360,14 +367,17 @@ function createHero() {
     hero.body.collideWorldBoundaires = true;
 
     hero.animations.add('left', [0], 10, true);
-    hero.animations.add ('right', [2], 10, true);
+    hero.animations.add('right', [2], 10, true);
     hero.animations.add('up', [3], 10, true);
     hero.animations.add('down', [1], 10, true);
 
     //sword to hero
     sword = player.create(400, 275, 'sword');
     game.physics.arcade.enable(sword);
-    sword.scale.setTo(.3, .3);
+    sword.scale.setTo(.4, .4);
+
+    sword.animations.add('left', [0], 10, true);
+    sword.animations.add('right', [1], 10, true);
 } 
 
 function summonHoard() {
@@ -383,8 +393,6 @@ function summonHoard() {
         game.physics.arcade.moveToObject(hoard, hero, speed = 30);
         //console.log(zombieHorde[i])
     } 
-    bossEmerge()
-   
     
 } 
 
@@ -393,7 +401,6 @@ function bossEmerge() {
     finalBoss.scale.setTo(3,4);
     boss.add(finalBoss);
     finalBoss.body.collideWorldBoundaires = true;
-    finalBoss.body.immovable = true;
     //game.physics.arcade.enable(finalBoss);
     game.physics.arcade.moveToXY(finalBoss, Math.floor(Math.random() * 1600), Math.floor(Math.random() * 1200), speed = 30);
     //finalBoss.events.onOutOfBounds.add(frameReset, this);
@@ -434,6 +441,7 @@ function gameOver() {
     gameOverScreen.add(finalScore);
 
     game.camera.follow(gameOverScreen);
+
 }
 
 function reset() {
@@ -447,7 +455,7 @@ function reset() {
     bossHealth = 50;
     bossHealthBar.text = "Boss health: " + bossHealth;
 
-    //boss.kill();
+    // finalBoss.kill();
     hero.kill();
     sword.kill();
 
@@ -456,6 +464,8 @@ function reset() {
     createHero()
 
     summonHoard()
+
+    bossEmerge();
 
     game.camera.follow(hero);
 }

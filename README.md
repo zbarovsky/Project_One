@@ -45,7 +45,6 @@ No one quite knows how it started, WW3, Corona, tear gas, the "deep fake". But w
 - Update: didn't actually need grid because phaser builds the canvas with one line of code. Did still build a grid for the game that didn't end up getting used.
 
 ## Known Bugs
-- Final boss moves through walls.
 - If you die and the final boss is alive, a second final boss appears on restart and the first one is still there. If you beat only one, it triggers the win function. So you always have at least two once you lose.
 - If you get stuck on a wall, the sword still moves forward without you and then get stuck floating out in space. To fix this, you can walk towards the wall where the sword is and reduce the distance back to normal.
 
